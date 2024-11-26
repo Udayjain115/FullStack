@@ -1,8 +1,6 @@
 import React from 'react';
 
 const Part = (props) => {
-  console.log('hi');
-
   console.log(props);
 
   return (
