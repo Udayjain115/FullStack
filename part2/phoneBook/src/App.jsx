@@ -17,7 +17,9 @@ const App = () => {
 
   const peopleToShow = showAll
     ? persons
-    : persons.filter((person) => person.name.includes(filter));
+    : persons.filter((person) =>
+        person.name.toLowerCase().includes(filter.toLowerCase())
+      );
   const handleButtonClick = (event) => {
     event.preventDefault();
 
