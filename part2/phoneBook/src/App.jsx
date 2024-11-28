@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import SearchField from './SearchField';
 import PersonForm from './PersonForm';
 import PersonField from './PersonField';
-import axios from 'axios';
+import peopleService from './services/people';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -12,9 +12,7 @@ const App = () => {
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then((response) => setPersons(response.data));
+    peopleService.getAll().then((initalPeople) => setPersons(initalPeople));
   }, []);
 
   const peopleToShow = showAll
@@ -34,10 +32,11 @@ const App = () => {
         name: newName,
         number: number,
       };
-      setPersons(persons.concat(newPerson));
-
-      setNewName('');
-      setNumber('');
+      peopleService.create(newPerson).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName('');
+        setNumber('');
+      });
     }
 
     if (foundDuplicate) {
