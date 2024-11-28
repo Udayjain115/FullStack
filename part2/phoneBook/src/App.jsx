@@ -11,6 +11,17 @@ const App = () => {
   const [showAll, setShowAll] = useState(true);
   const [filter, setFilter] = useState('');
 
+  const handleDeleteClick = (id) => {
+    const personToDelete = persons.find((person) => id === person.id);
+    if (window.confirm(`Delete ${personToDelete.name}`)) {
+      const person = persons.filter((person) => {
+        return person.id !== id;
+      });
+      peopleService.deletePerson(id);
+      setPersons(person);
+    }
+  };
+
   useEffect(() => {
     peopleService.getAll().then((initalPeople) => setPersons(initalPeople));
   }, []);
@@ -20,6 +31,7 @@ const App = () => {
     : persons.filter((person) =>
         person.name.toLowerCase().includes(filter.toLowerCase())
       );
+
   const handleButtonClick = (event) => {
     event.preventDefault();
 
@@ -39,8 +51,15 @@ const App = () => {
       });
     }
 
-    if (foundDuplicate) {
-      alert(`${newName} is already added to phonebook`);
+    if (foundDuplicate.number != number) {
+      const updatedPerson = { ...foundDuplicate, number: number };
+      peopleService
+        .update(updatedPerson.id, updatedPerson)
+        .then((returnedPerson) => {
+          setPersons(
+            persons.map((p) => (p.id === updatedPerson.id ? returnedPerson : p))
+          );
+        });
     }
   };
 
@@ -83,7 +102,10 @@ const App = () => {
 
       <h2>Numbers</h2>
 
-      <PersonField persons={peopleToShow} />
+      <PersonField
+        persons={peopleToShow}
+        handleDeleteClick={handleDeleteClick}
+      />
     </div>
   );
 };
